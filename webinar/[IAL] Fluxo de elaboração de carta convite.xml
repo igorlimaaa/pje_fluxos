@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de elaboração de carta convite">
+    <description><![CDATA[cd_fluxo: IAL_FLX_ELAB_CARTA_CONVITE
+Descrição: Fluxo destinado a confecção da carta convite..]]></description>  
+    <!-- SWIMLANES -->
+    <swimlane name="solicitante">
+        <assignment actor-id="#{actor.id}"/>
+    </swimlane>
+    <swimlane name="Secretaria e Gabinete">
+        <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338')}"/>
+    </swimlane>
+    <swimlane name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
+        <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338,9:1469')}"/>
+    </swimlane>  
+    <!-- START-STATE -->
+    <start-state name="Início">
+        <task name="Tarefa inicial" swimlane="solicitante" priority="3"/>
+        <transition to="[IAL] Carta Convite - Elaborar" name="[IAL] Carta Convite - Elaborar"/>
+    </start-state>  
+    <!-- NODES -->
+    <task-node end-tasks="true" name="[IAL] Carta Convite - Elaborar">
+        <task name="[IAL] Carta Convite - Elaborar" swimlane="Secretaria e Gabinete" priority="3">
+            <controller>
+                <variable name="cartaConvite" mapped-name="textEditCombo:cartaConvite" access="read,write"/>
+                <variable name="miniPac" mapped-name="miniPAC:miniPac" access="read,write"/>
+            </controller>
+        </task>
+        <transition to="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
+            <condition expression="#{true}"/>
+        </transition>
+        <transition to="[IAL] Fluxo de análise de seção de cumprimento" name="Cancelar elaboração"/>
+        <transition to="[IAL] Carta convite - Assinar" name="Assinar carta convite"/>
+        <event type="task-create">
+            <action name="upd" expression="#{taskInstanceUtil.setVariable('tiposDisponiveisIds','175')}"/>
+            <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('prepararAto:meiosComunicacoes','C')}"/>
+            <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('pje:fluxo:transicao:dispensaRequeridos','Cancelar elaboração')}"/>
+        </event>
+    </task-node>
+    <task-node end-tasks="true" name="[IAL] Carta convite - Assinar">
+        <task name="[IAL] Carta convite - Assinar" swimlane="Secretaria e Gabinete" priority="3">
+            <controller>
+                <variable name="cartaConvite" mapped-name="textEditSignature:cartaConvite" access="read,write"/>
+                <variable name="miniPac" mapped-name="miniPAC:miniPac" access="read,write"/>
+            </controller>
+        </task>
+        <transition to="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
+            <condition expression="#{true}"/>
+        </transition>
+        <transition to="[IAL] Carta convite - Ajustar" name="Ajustar carta convite"/>
+        <transition to="[IAL] Lançar movimento de expedição" name="Lançar movimento de expedição">
+            <condition expression="#{true}"/>
+        </transition>
+        <event type="task-create">
+            <action name="upd" expression="#{taskInstanceUtil.setVariable('tiposDisponiveisIds','175')}"/>
+            <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('prepararAto:meiosComunicacoes','C')}"/>
+            <action name="upd" expression="#{taskInstanceUtil.setFrameDefaultTransition('Lançar movimento de expedição')}"/>
+            <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('pje:fluxo:transicao:dispensaRequeridos', 'Lançar movimento de expedição')}"/>
+        </event>
+    </task-node>
+    <task-node end-tasks="true" name="[IAL] Carta convite - Ajustar">
+        <task name="[IAL] Carta convite - Ajustar" swimlane="Secretaria e Gabinete" priority="3">
+            <controller>
+                <variable name="cartaConvite" mapped-name="textEditCombo:cartaConvite" access="read,write"/>
+                <variable name="miniPac" mapped-name="miniPAC:miniPac" access="read,write"/>
+            </controller>
+        </task>
+        <transition to="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
+            <condition expression="#{true}"/>
+        </transition>
+        <transition to="[IAL] Carta convite - Assinar" name="Assinar carta convite"/>
+        <event type="task-create">
+            <action name="upd" expression="#{taskInstanceUtil.setVariable('tiposDisponiveisIds','175')}"/>
+            <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('prepararAto:meiosComunicacoes','C')}"/>
+        </event>
+    </task-node>
+    <node name="[IAL] Lançar movimento de expedição">
+        <transition to="[IAL] Fluxo de controle de retorno de expediente" name="[IAL] Fluxo de controle de retorno de expediente"/>
+        <event type="node-enter">
+            <action expression="#{preencherMovimento.deCodigo(60).associarAoDocumento(documentoJudicialService.getDocumento(tramitacaoProcessualService.recuperaVariavel('pje:fluxo:ultimoDocumentoJuntado'))).comComplementoDeCodigo(4).doTipoDominio().preencherComElementoDeCodigo(80).lancarMovimento()}"/>
+        </event>
+    </node>
+    <node name="[IAL] Apagar variáveis do fluxo">
+        <transition to="Término" name="Término"/>
+        <event type="node-enter">
+            <action expression="#{tramitacaoProcessualService.apagaVariavel('minutaEmElaboracao')}"/>
+            <action expression="#{tramitacaoProcessualService.apagaVariavel('cartaConvite')}"/>
+            <action expression="#{tramitacaoProcessualService.apagaVariavel('miniPac')}"/>
+        </event>
+    </node>
+    <node name="[IAL] Fluxo de análise de seção de cumprimento">
+        <transition to="[IAL] Apagar variáveis do fluxo" name="[IAL] Apagar variáveis do fluxo"/>
+        <event type="node-enter">
+            <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_ANAL_SEC_CUMP')}"/>
+        </event>
+    </node>
+    <node name="[IAL] Fluxo de controle de retorno de expediente">
+        <transition to="[IAL] Apagar variáveis do fluxo" name="[IAL] Apagar variáveis do fluxo"/>
+        <event type="node-enter">
+            <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_CONT_RETORNO_EXP', processInstanceUtil.getVariables())}"/>
+        </event>
+    </node>
+    <end-state name="Término"/>
+    <task-node end-tasks="true" name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
+        <task name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" swimlane="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" priority="3"/>
+        <transition to="Término" name="Término"/>
+        <transition to="[IAL] Carta Convite - Elaborar" name="[IAL] Carta Convite - Elaborar"/>
+        <transition to="[IAL] Carta convite - Assinar" name="[IAL] Carta convite - Assinar"/>
+        <transition to="[IAL] Carta convite - Ajustar" name="[IAL] Carta convite - Ajustar"/>
+    </task-node>  
+    <!-- PROCESS-EVENTS -->
+    <event type="superstate-enter">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="process-start">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="before-signal">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="task-end">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="task-create">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="subprocess-created">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="task-assign">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="transition">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="after-signal">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="timer">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="task-start">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="subprocess-end">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="process-end">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="node-leave">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="superstate-leave">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="node-enter">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>  
+    <!-- ACTIONS --> 
+</process-definition>

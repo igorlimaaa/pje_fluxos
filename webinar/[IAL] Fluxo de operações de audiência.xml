@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de operações de audiência">
+    <description><![CDATA[cd_fluxo: IAL_FLX_OP_AUD
+Descrição: Fluxo destinado as operações de audiência.]]></description>  
+    <!-- SWIMLANES -->
+    <swimlane name="Nó de Desvio - [IAL] Fluxo de operações de audiência">
+        <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338,9:1469')}"/>
+    </swimlane>
+    <swimlane name="solicitante">
+        <assignment actor-id="#{actor.id}"/>
+    </swimlane>
+    <swimlane name="Secretaria e Gabinete">
+        <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338')}"/>
+    </swimlane>  
+    <!-- START-STATE -->
+    <start-state name="Início">
+        <task name="Tarefa inicial" swimlane="solicitante" priority="3"/>
+        <transition to="[IAL] Existe audiência" name="[IAL] Existe audiência"/>
+    </start-state>  
+    <!-- NODES -->
+    <decision expression="#{processoTrfHome.instance.processoAudienciaList.size() &gt; 0 ? '[IAL] Audiência - AGUARDAR' : '[IAL] Audiência - MANUSEAR'}" name="[IAL] Existe audiência">
+        <transition to="[IAL] Audiência - AGUARDAR" name="[IAL] Audiência - AGUARDAR"/>
+        <transition to="[IAL] Audiência - MANUSEAR" name="[IAL] Audiência - MANUSEAR"/>
+    </decision>
+    <task-node end-tasks="true" name="[IAL] Audiência - AGUARDAR">
+        <task name="[IAL] Audiência - AGUARDAR" swimlane="Secretaria e Gabinete" priority="3"/>
+        <transition to="[IAL] Audiência - MANUSEAR" name="[IAL] Manusear audiência"/>
+        <transition to="[IAL] Fluxo de realização de audiência" name="[IAL] Realizar audiência"/>
+        <transition to="Nó de Desvio - [IAL] Fluxo de operações de audiência" name="Nó de Desvio - [IAL] Fluxo de operações de audiência">
+            <condition expression="#{true}"/>
+        </transition>
+        <transition to="[IAL] Fluxo de elaboração de carta convite" name="[IAL] Elaborar carta convite"/>
+        <transition to="[IAL] Fluxo de análise da seção de cumprimento" name="[IAL] Cancelar tarefa"/>
+    </task-node>
+    <task-node end-tasks="true" name="[IAL] Audiência - MANUSEAR">
+        <task name="[IAL] Audiência - MANUSEAR" swimlane="Secretaria e Gabinete" priority="3">
+            <controller>
+                <variable name="Processo_Fluxo_abaDesignarAudiencia" mapped-name="frame:Processo_Fluxo_abaDesignarAudiencia" access="read,write"/>
+            </controller>
+        </task>
+        <transition to="[IAL] Audiência - AGUARDAR" name="[IAL] Aguardar audiência"/>
+        <transition to="[IAL] Fluxo de análise da seção de cumprimento" name="[IAL] Cancelar tarefa"/>
+        <transition to="[IAL] Fluxo de elaboração de carta convite" name="[IAL] Elaborar carta convite"/>
+        <transition to="Nó de Desvio - [IAL] Fluxo de operações de audiência" name="Nó de Desvio - [IAL] Fluxo de operações de audiência">
+            <condition expression="#{true}"/>
+        </transition>
+    </task-node>
+    <node name="[IAL] Fluxo de análise da seção de cumprimento">
+        <transition to="Término" name="Término"/>
+    </node>
+    <node name="[IAL] Fluxo de elaboração de carta convite">
+        <transition to="Término" name="Término"/>
+        <event type="node-enter">
+            <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_ELAB_CARTA_CONVITE')}"/>
+        </event>
+    </node>
+    <node name="[IAL] Fluxo de realização de audiência">
+        <transition to="Término" name="Término"/>
+        <event type="node-enter">
+            <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_REALIZA_AUD')}"/>
+        </event>
+    </node>
+    <end-state name="Término"/>
+    <task-node end-tasks="true" name="Nó de Desvio - [IAL] Fluxo de operações de audiência">
+        <task name="Nó de Desvio - [IAL] Fluxo de operações de audiência" swimlane="Nó de Desvio - [IAL] Fluxo de operações de audiência" priority="3"/>
+        <transition to="Término" name="Término"/>
+        <transition to="[IAL] Audiência - AGUARDAR" name="[IAL] Audiência - AGUARDAR"/>
+        <transition to="[IAL] Audiência - MANUSEAR" name="[IAL] Audiência - MANUSEAR"/>
+    </task-node>  
+    <!-- PROCESS-EVENTS -->
+    <event type="superstate-enter">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="process-start">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="before-signal">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="task-end">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="task-create">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="subprocess-created">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="task-assign">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="transition">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="after-signal">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="timer">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="task-start">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="subprocess-end">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="process-end">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="node-leave">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="superstate-leave">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event>
+    <event type="node-enter">
+        <script>br.com.infox.ibpm.util.JbpmEvents.raiseEvent(executionContext)</script>
+    </event> 
+</process-definition>
