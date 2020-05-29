@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia">
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de realização de audiência">
     <description><![CDATA[cd_fluxo: IAL_FLX_REALIZA_AUD
-DescriÃ§Ã£o: Fluxo destinado a realizaÃ§Ã£o das audiÃªncias.
+Descrição: Fluxo destinado a realização das audiências.
 Ajustes realizados: 
 - Ajustes na combo de acordo.]]></description>  
     <!-- SWIMLANES -->
@@ -12,136 +12,136 @@ Ajustes realizados:
     <swimlane name="Secretaria e Gabinete">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338')}"/>
     </swimlane>
-    <swimlane name="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia">
+    <swimlane name="Nó de Desvio - [IAL] Fluxo de realização de audiência">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338,9:1469')}"/>
     </swimlane>  
     <!-- START-STATE -->
-    <start-state name="InÃ­cio">
+    <start-state name="Início">
         <task name="Tarefa inicial" swimlane="solicitante" priority="3"/>
-        <transition to="[IAL] Recuperar AudiÃªncia" name="[IAL] Recuperar AudiÃªncia"/>
+        <transition to="[IAL] Recuperar Audiência" name="[IAL] Recuperar Audiência"/>
     </start-state>  
     <!-- NODES -->
-    <decision expression="#{processoTrfHome.instance.processoAudienciaList.size() &gt; 0 ? 'Minutar' : 'Analisar'}" name="[IAL] Existe audiÃªncia designada?">
-        <transition to="[IAL] AudiÃªncia pendente de designaÃ§Ã£o - ANALISAR" name="Analisar"/>
-        <transition to="[IAL] AudiÃªncia pendente de ata - MINUTAR" name="Minutar"/>
+    <decision expression="#{processoTrfHome.instance.processoAudienciaList.size() &gt; 0 ? 'Minutar' : 'Analisar'}" name="[IAL] Existe audiência designada?">
+        <transition to="[IAL] Audiência pendente de designação - ANALISAR" name="Analisar"/>
+        <transition to="[IAL] Audiência pendente de ata - MINUTAR" name="Minutar"/>
     </decision>
-    <decision expression="#{processoAudienciaManager.findById(tramitacaoProcessualService.recuperaVariavel('pje:fluxo:audienciaSelecionada').idProcessoAudiencia).inAcordo ? '[IAL] Incluir no fluxo de evoluÃ§Ã£o da classe' : '[IAL] AudiÃªncia sem acordo - ANALISAR'}" name="[IAL] Houve acordo?">
-        <transition to="[IAL] Incluir no fluxo de evoluÃ§Ã£o da classe" name="[IAL] Incluir no fluxo de evoluÃ§Ã£o da classe"/>
-        <transition to="[IAL] AudiÃªncia sem acordo - ANALISAR" name="[IAL] AudiÃªncia sem acordo - ANALISAR"/>
+    <decision expression="#{processoAudienciaManager.findById(tramitacaoProcessualService.recuperaVariavel('pje:fluxo:audienciaSelecionada').idProcessoAudiencia).inAcordo ? '[IAL] Incluir no fluxo de evolução da classe' : '[IAL] Audiência sem acordo - ANALISAR'}" name="[IAL] Houve acordo?">
+        <transition to="[IAL] Incluir no fluxo de evolução da classe" name="[IAL] Incluir no fluxo de evolução da classe"/>
+        <transition to="[IAL] Audiência sem acordo - ANALISAR" name="[IAL] Audiência sem acordo - ANALISAR"/>
     </decision>
-    <task-node end-tasks="true" name="[IAL] AudiÃªncia pendente de designaÃ§Ã£o - ANALISAR">
-        <task name="[IAL] AudiÃªncia pendente de designaÃ§Ã£o - ANALISAR" swimlane="Secretaria e Gabinete" priority="3"/>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia" name="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia">
+    <task-node end-tasks="true" name="[IAL] Audiência pendente de designação - ANALISAR">
+        <task name="[IAL] Audiência pendente de designação - ANALISAR" swimlane="Secretaria e Gabinete" priority="3"/>
+        <transition to="Nó de Desvio - [IAL] Fluxo de realização de audiência" name="Nó de Desvio - [IAL] Fluxo de realização de audiência">
             <condition expression="#{true}"/>
         </transition>
-        <transition to="[IAL] Incluir no fluxo de seÃ§Ã£o de cumprimento" name="Cancelar realizaÃ§Ã£o de audiÃªncia"/>
+        <transition to="[IAL] Incluir no fluxo de seção de cumprimento" name="Cancelar realização de audiência"/>
     </task-node>
-    <task-node end-tasks="true" name="[IAL] AudiÃªncia pendente de ata - MINUTAR">
-        <task name="[IAL] AudiÃªncia pendente de ata - MINUTAR" swimlane="Secretaria e Gabinete" priority="3">
+    <task-node end-tasks="true" name="[IAL] Audiência pendente de ata - MINUTAR">
+        <task name="[IAL] Audiência pendente de ata - MINUTAR" swimlane="Secretaria e Gabinete" priority="3">
             <controller>
                 <variable name="ataAudiencia" mapped-name="textEditCombo:ataAudiencia" access="read,write"/>
             </controller>
         </task>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia" name="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia">
+        <transition to="Nó de Desvio - [IAL] Fluxo de realização de audiência" name="Nó de Desvio - [IAL] Fluxo de realização de audiência">
             <condition expression="#{true}"/>
         </transition>
-        <transition to="[IAL] AudiÃªncia pendente de ata - ASSINAR " name="Assinar ata de audiÃªncia"/>
-        <transition to="[IAL] Incluir no fluxo de seÃ§Ã£o de cumprimento" name="Cancelar realizaÃ§Ã£o de audiÃªncia"/>
+        <transition to="[IAL] Audiência pendente de ata - ASSINAR " name="Assinar ata de audiência"/>
+        <transition to="[IAL] Incluir no fluxo de seção de cumprimento" name="Cancelar realização de audiência"/>
         <event type="task-create">
             <action name="upd" expression="#{taskInstanceUtil.setVariable('tiposDisponiveisIds','87')}"/>
         </event>
     </task-node>
-    <task-node end-tasks="true" name="[IAL] AudiÃªncia pendente de ata - ASSINAR ">
-        <task name="[IAL] AudiÃªncia pendente de ata - ASSINAR " swimlane="Secretaria e Gabinete" priority="3">
+    <task-node end-tasks="true" name="[IAL] Audiência pendente de ata - ASSINAR ">
+        <task name="[IAL] Audiência pendente de ata - ASSINAR " swimlane="Secretaria e Gabinete" priority="3">
             <controller>
                 <variable name="ataAudiencia" mapped-name="textEditSignature:ataAudiencia" access="read,write"/>
             </controller>
         </task>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia" name="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia">
+        <transition to="Nó de Desvio - [IAL] Fluxo de realização de audiência" name="Nó de Desvio - [IAL] Fluxo de realização de audiência">
             <condition expression="#{true}"/>
         </transition>
-        <transition to="[IAL] AudiÃªncia pendente de ata - AJUSTAR" name="Ajustar ata de audiÃªncia"/>
-        <transition to="[IAL] AudiÃªncia pendente de informaÃ§Ãµes - PREENCHER" name="Preencher dados da audiÃªncia">
+        <transition to="[IAL] Audiência pendente de ata - AJUSTAR" name="Ajustar ata de audiência"/>
+        <transition to="[IAL] Audiência pendente de informações - PREENCHER" name="Preencher dados da audiência">
             <condition expression="#{true}"/>
         </transition>
         <event type="task-create">
-            <action name="upd" expression="#{taskInstanceUtil.setFrameDefaultTransition('Preencher dados da audiÃªncia')}"/>
+            <action name="upd" expression="#{taskInstanceUtil.setFrameDefaultTransition('Preencher dados da audiência')}"/>
             <action name="upd" expression="#{taskInstanceUtil.setVariable('tiposDisponiveisIds','87')}"/>
         </event>
     </task-node>
-    <task-node end-tasks="true" name="[IAL] AudiÃªncia pendente de ata - AJUSTAR">
-        <task name="[IAL] AudiÃªncia pendente de ata - AJUSTAR" swimlane="Secretaria e Gabinete" priority="3">
+    <task-node end-tasks="true" name="[IAL] Audiência pendente de ata - AJUSTAR">
+        <task name="[IAL] Audiência pendente de ata - AJUSTAR" swimlane="Secretaria e Gabinete" priority="3">
             <controller>
                 <variable name="ataAudiencia" mapped-name="textEditCombo:ataAudiencia" access="read,write"/>
             </controller>
         </task>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia" name="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia">
+        <transition to="Nó de Desvio - [IAL] Fluxo de realização de audiência" name="Nó de Desvio - [IAL] Fluxo de realização de audiência">
             <condition expression="#{true}"/>
         </transition>
-        <transition to="[IAL] AudiÃªncia pendente de ata - ASSINAR " name="Assinar ata de audiÃªncia"/>
+        <transition to="[IAL] Audiência pendente de ata - ASSINAR " name="Assinar ata de audiência"/>
         <event type="task-create">
             <action name="upd" expression="#{taskInstanceUtil.setVariable('tiposDisponiveisIds','87')}"/>
         </event>
     </task-node>
-    <task-node end-tasks="true" name="[IAL] AudiÃªncia pendente de informaÃ§Ãµes - PREENCHER">
-        <task name="[IAL] AudiÃªncia pendente de informaÃ§Ãµes - PREENCHER" swimlane="Secretaria e Gabinete" priority="3">
+    <task-node end-tasks="true" name="[IAL] Audiência pendente de informações - PREENCHER">
+        <task name="[IAL] Audiência pendente de informações - PREENCHER" swimlane="Secretaria e Gabinete" priority="3">
             <controller>
                 <variable name="ProcessoAudiencia_informarDadosAudiencia" mapped-name="frame:ProcessoAudiencia_informarDadosAudiencia" access="read,write"/>
             </controller>
         </task>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia" name="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia">
+        <transition to="Nó de Desvio - [IAL] Fluxo de realização de audiência" name="Nó de Desvio - [IAL] Fluxo de realização de audiência">
             <condition expression="#{true}"/>
         </transition>
-        <transition to="[IAL] LanÃ§ar movimentaÃ§Ãµes" name="[IAL] LanÃ§ar movimentaÃ§Ãµes"/>
+        <transition to="[IAL] Lançar movimentações" name="[IAL] Lançar movimentações"/>
     </task-node>
-    <task-node end-tasks="true" name="[IAL] AudiÃªncia sem acordo - ANALISAR">
-        <task name="[IAL] AudiÃªncia sem acordo - ANALISAR" swimlane="Secretaria e Gabinete" priority="3"/>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia" name="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia">
+    <task-node end-tasks="true" name="[IAL] Audiência sem acordo - ANALISAR">
+        <task name="[IAL] Audiência sem acordo - ANALISAR" swimlane="Secretaria e Gabinete" priority="3"/>
+        <transition to="Nó de Desvio - [IAL] Fluxo de realização de audiência" name="Nó de Desvio - [IAL] Fluxo de realização de audiência">
             <condition expression="#{true}"/>
         </transition>
-        <transition to="[IAL] Incluir no fluxo de seÃ§Ã£o de cumprimento" name="Concluir"/>
+        <transition to="[IAL] Incluir no fluxo de seção de cumprimento" name="Concluir"/>
     </task-node>
-    <node name="[IAL] Incluir no fluxo de evoluÃ§Ã£o da classe">
-        <transition to="[IAL] Apagar variÃ¡veis" name="[IAL] Apagar variÃ¡veis"/>
+    <node name="[IAL] Incluir no fluxo de evolução da classe">
+        <transition to="[IAL] Apagar variáveis" name="[IAL] Apagar variáveis"/>
         <event type="node-enter">
             <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_EVOL_CLASS', processInstanceUtil.getVariables())}"/>
         </event>
     </node>
-    <node name="[IAL] Incluir no fluxo de seÃ§Ã£o de cumprimento">
-        <transition to="[IAL] Apagar variÃ¡veis" name="[IAL] Apagar variÃ¡veis"/>
+    <node name="[IAL] Incluir no fluxo de seção de cumprimento">
+        <transition to="[IAL] Apagar variáveis" name="[IAL] Apagar variáveis"/>
         <event type="node-enter">
             <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_SEC_ANAL_CUMP', processInstanceUtil.getVariables())}"/>
         </event>
     </node>
-    <node name="[IAL] LanÃ§ar movimentaÃ§Ãµes">
+    <node name="[IAL] Lançar movimentações">
         <transition to="[IAL] Houve acordo?" name="[IAL] Houve acordo?"/>
         <event type="node-enter">
             <action expression="#{processoAudienciaHome.registrarMovimentoAudiencia()}"/>
         </event>
     </node>
-    <node name="[IAL] Recuperar AudiÃªncia">
-        <transition to="[IAL] Existe audiÃªncia designada?" name="[IAL] Existe audiÃªncia designada?"/>
+    <node name="[IAL] Recuperar Audiência">
+        <transition to="[IAL] Existe audiência designada?" name="[IAL] Existe audiência designada?"/>
         <event type="node-enter">
             <action expression="#{tramitacaoProcessualService.gravaVariavel('pje:fluxo:audienciaSelecionada', processoJudicialManager.getAudienciaDesignadaMaisAntiga(tramitacaoProcessualService.recuperaProcesso()))}"/>
         </event>
     </node>
-    <node name="[IAL] Apagar variÃ¡veis">
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
+    <node name="[IAL] Apagar variáveis">
+        <transition to="Término" name="Término"/>
         <event type="node-enter">
             <action expression="#{tramitacaoProcessualService.apagaVariavel('minutaEmElaboracao')}"/>
             <action expression="#{tramitacaoProcessualService.apagaVariavel('ataAudiencia')}"/>
         </event>
     </node>
-    <end-state name="TÃ©rmino"/>
-    <task-node end-tasks="true" name="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia">
-        <task name="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia" swimlane="NÃ³ de Desvio - [IAL] Fluxo de realizaÃ§Ã£o de audiÃªncia" priority="3"/>
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
-        <transition to="[IAL] AudiÃªncia pendente de designaÃ§Ã£o - ANALISAR" name="[IAL] AudiÃªncia pendente de designaÃ§Ã£o - ANALISAR"/>
-        <transition to="[IAL] AudiÃªncia pendente de ata - MINUTAR" name="[IAL] AudiÃªncia pendente de ata - MINUTAR"/>
-        <transition to="[IAL] AudiÃªncia pendente de ata - ASSINAR " name="[IAL] AudiÃªncia pendente de ata - ASSINAR "/>
-        <transition to="[IAL] AudiÃªncia pendente de ata - AJUSTAR" name="[IAL] AudiÃªncia pendente de ata - AJUSTAR"/>
-        <transition to="[IAL] AudiÃªncia pendente de informaÃ§Ãµes - PREENCHER" name="[IAL] AudiÃªncia pendente de informaÃ§Ãµes - PREENCHER"/>
-        <transition to="[IAL] AudiÃªncia sem acordo - ANALISAR" name="[IAL] AudiÃªncia sem acordo - ANALISAR"/>
+    <end-state name="Término"/>
+    <task-node end-tasks="true" name="Nó de Desvio - [IAL] Fluxo de realização de audiência">
+        <task name="Nó de Desvio - [IAL] Fluxo de realização de audiência" swimlane="Nó de Desvio - [IAL] Fluxo de realização de audiência" priority="3"/>
+        <transition to="Término" name="Término"/>
+        <transition to="[IAL] Audiência pendente de designação - ANALISAR" name="[IAL] Audiência pendente de designação - ANALISAR"/>
+        <transition to="[IAL] Audiência pendente de ata - MINUTAR" name="[IAL] Audiência pendente de ata - MINUTAR"/>
+        <transition to="[IAL] Audiência pendente de ata - ASSINAR " name="[IAL] Audiência pendente de ata - ASSINAR "/>
+        <transition to="[IAL] Audiência pendente de ata - AJUSTAR" name="[IAL] Audiência pendente de ata - AJUSTAR"/>
+        <transition to="[IAL] Audiência pendente de informações - PREENCHER" name="[IAL] Audiência pendente de informações - PREENCHER"/>
+        <transition to="[IAL] Audiência sem acordo - ANALISAR" name="[IAL] Audiência sem acordo - ANALISAR"/>
     </task-node>  
     <!-- PROCESS-EVENTS -->
     <event type="superstate-enter">

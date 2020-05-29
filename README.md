@@ -6,7 +6,13 @@
 
 > Possuir o python instalado e configurado na sua máquina. 
 
-> Após o item anterior, instalar o "pip". (Ex: pip install psycopg2)
+> Após o item anterior, instalar o "pip". 
+
+> Ex: 
+            sudo easy_install pip
+            pip install psycopg2-binary
+            
+            
 
 
 ### Configurações:

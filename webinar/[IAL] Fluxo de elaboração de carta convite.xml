@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de elaboraÃ§Ã£o de carta convite">
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de elaboração de carta convite">
     <description><![CDATA[cd_fluxo: IAL_FLX_ELAB_CARTA_CONVITE
-DescriÃ§Ã£o: Fluxo destinado a confecÃ§Ã£o da carta convite..]]></description>  
+Descrição: Fluxo destinado a confecção da carta convite..]]></description>  
     <!-- SWIMLANES -->
     <swimlane name="solicitante">
         <assignment actor-id="#{actor.id}"/>
@@ -10,11 +10,11 @@ DescriÃ§Ã£o: Fluxo destinado a confecÃ§Ã£o da carta convite..]]></description>
     <swimlane name="Secretaria e Gabinete">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338')}"/>
     </swimlane>
-    <swimlane name="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite">
+    <swimlane name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338,9:1469')}"/>
     </swimlane>  
     <!-- START-STATE -->
-    <start-state name="InÃ­cio">
+    <start-state name="Início">
         <task name="Tarefa inicial" swimlane="solicitante" priority="3"/>
         <transition to="[IAL] Carta Convite - Elaborar" name="[IAL] Carta Convite - Elaborar"/>
     </start-state>  
@@ -26,15 +26,15 @@ DescriÃ§Ã£o: Fluxo destinado a confecÃ§Ã£o da carta convite..]]></description>
                 <variable name="miniPac" mapped-name="miniPAC:miniPac" access="read,write"/>
             </controller>
         </task>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite" name="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite">
+        <transition to="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
             <condition expression="#{true}"/>
         </transition>
-        <transition to="[IAL] Fluxo de anÃ¡lise de seÃ§Ã£o de cumprimento" name="Cancelar elaboraÃ§Ã£o"/>
+        <transition to="[IAL] Fluxo de análise de seção de cumprimento" name="Cancelar elaboração"/>
         <transition to="[IAL] Carta convite - Assinar" name="Assinar carta convite"/>
         <event type="task-create">
             <action name="upd" expression="#{taskInstanceUtil.setVariable('tiposDisponiveisIds','175')}"/>
             <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('prepararAto:meiosComunicacoes','C')}"/>
-            <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('pje:fluxo:transicao:dispensaRequeridos','Cancelar elaboraÃ§Ã£o')}"/>
+            <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('pje:fluxo:transicao:dispensaRequeridos','Cancelar elaboração')}"/>
         </event>
     </task-node>
     <task-node end-tasks="true" name="[IAL] Carta convite - Assinar">
@@ -44,18 +44,18 @@ DescriÃ§Ã£o: Fluxo destinado a confecÃ§Ã£o da carta convite..]]></description>
                 <variable name="miniPac" mapped-name="miniPAC:miniPac" access="read,write"/>
             </controller>
         </task>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite" name="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite">
+        <transition to="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
             <condition expression="#{true}"/>
         </transition>
         <transition to="[IAL] Carta convite - Ajustar" name="Ajustar carta convite"/>
-        <transition to="[IAL] LanÃ§ar movimento de expediÃ§Ã£o" name="LanÃ§ar movimento de expediÃ§Ã£o">
+        <transition to="[IAL] Lançar movimento de expedição" name="Lançar movimento de expedição">
             <condition expression="#{true}"/>
         </transition>
         <event type="task-create">
             <action name="upd" expression="#{taskInstanceUtil.setVariable('tiposDisponiveisIds','175')}"/>
             <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('prepararAto:meiosComunicacoes','C')}"/>
-            <action name="upd" expression="#{taskInstanceUtil.setFrameDefaultTransition('LanÃ§ar movimento de expediÃ§Ã£o')}"/>
-            <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('pje:fluxo:transicao:dispensaRequeridos', 'LanÃ§ar movimento de expediÃ§Ã£o')}"/>
+            <action name="upd" expression="#{taskInstanceUtil.setFrameDefaultTransition('Lançar movimento de expedição')}"/>
+            <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('pje:fluxo:transicao:dispensaRequeridos', 'Lançar movimento de expedição')}"/>
         </event>
     </task-node>
     <task-node end-tasks="true" name="[IAL] Carta convite - Ajustar">
@@ -65,7 +65,7 @@ DescriÃ§Ã£o: Fluxo destinado a confecÃ§Ã£o da carta convite..]]></description>
                 <variable name="miniPac" mapped-name="miniPAC:miniPac" access="read,write"/>
             </controller>
         </task>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite" name="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite">
+        <transition to="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
             <condition expression="#{true}"/>
         </transition>
         <transition to="[IAL] Carta convite - Assinar" name="Assinar carta convite"/>
@@ -74,36 +74,36 @@ DescriÃ§Ã£o: Fluxo destinado a confecÃ§Ã£o da carta convite..]]></description>
             <action name="upd" expression="#{tramitacaoProcessualService.gravaVariavelTarefa('prepararAto:meiosComunicacoes','C')}"/>
         </event>
     </task-node>
-    <node name="[IAL] LanÃ§ar movimento de expediÃ§Ã£o">
+    <node name="[IAL] Lançar movimento de expedição">
         <transition to="[IAL] Fluxo de controle de retorno de expediente" name="[IAL] Fluxo de controle de retorno de expediente"/>
         <event type="node-enter">
             <action expression="#{preencherMovimento.deCodigo(60).associarAoDocumento(documentoJudicialService.getDocumento(tramitacaoProcessualService.recuperaVariavel('pje:fluxo:ultimoDocumentoJuntado'))).comComplementoDeCodigo(4).doTipoDominio().preencherComElementoDeCodigo(80).lancarMovimento()}"/>
         </event>
     </node>
-    <node name="[IAL] Apagar variÃ¡veis do fluxo">
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
+    <node name="[IAL] Apagar variáveis do fluxo">
+        <transition to="Término" name="Término"/>
         <event type="node-enter">
             <action expression="#{tramitacaoProcessualService.apagaVariavel('minutaEmElaboracao')}"/>
             <action expression="#{tramitacaoProcessualService.apagaVariavel('cartaConvite')}"/>
             <action expression="#{tramitacaoProcessualService.apagaVariavel('miniPac')}"/>
         </event>
     </node>
-    <node name="[IAL] Fluxo de anÃ¡lise de seÃ§Ã£o de cumprimento">
-        <transition to="[IAL] Apagar variÃ¡veis do fluxo" name="[IAL] Apagar variÃ¡veis do fluxo"/>
+    <node name="[IAL] Fluxo de análise de seção de cumprimento">
+        <transition to="[IAL] Apagar variáveis do fluxo" name="[IAL] Apagar variáveis do fluxo"/>
         <event type="node-enter">
             <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_ANAL_SEC_CUMP')}"/>
         </event>
     </node>
     <node name="[IAL] Fluxo de controle de retorno de expediente">
-        <transition to="[IAL] Apagar variÃ¡veis do fluxo" name="[IAL] Apagar variÃ¡veis do fluxo"/>
+        <transition to="[IAL] Apagar variáveis do fluxo" name="[IAL] Apagar variáveis do fluxo"/>
         <event type="node-enter">
             <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_CONT_RETORNO_EXP', processInstanceUtil.getVariables())}"/>
         </event>
     </node>
-    <end-state name="TÃ©rmino"/>
-    <task-node end-tasks="true" name="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite">
-        <task name="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite" swimlane="NÃ³ de Desvio - [IAL] Fluxo de elaboraÃ§Ã£o de carta convite" priority="3"/>
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
+    <end-state name="Término"/>
+    <task-node end-tasks="true" name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite">
+        <task name="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" swimlane="Nó de Desvio - [IAL] Fluxo de elaboração de carta convite" priority="3"/>
+        <transition to="Término" name="Término"/>
         <transition to="[IAL] Carta Convite - Elaborar" name="[IAL] Carta Convite - Elaborar"/>
         <transition to="[IAL] Carta convite - Assinar" name="[IAL] Carta convite - Assinar"/>
         <transition to="[IAL] Carta convite - Ajustar" name="[IAL] Carta convite - Ajustar"/>

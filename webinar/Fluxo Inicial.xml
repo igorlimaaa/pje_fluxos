@@ -2,34 +2,34 @@
 
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="Fluxo Inicial"> 
     <!-- START-STATE -->
-    <start-state name="InÃ­cio">
+    <start-state name="Início">
         <task name="Tarefa inicial" priority="3"/>
-        <transition to="Atribuir situaÃ§Ã£o em andamento" name="Atribuir situaÃ§Ã£o em andamento"/>
+        <transition to="Atribuir situação em andamento" name="Atribuir situação em andamento"/>
     </start-state>  
     <!-- NODES -->
-    <node name="Atribuir situaÃ§Ã£o em andamento">
-        <transition to="Testa competÃªncia" name="Testa competÃªncia"/>
+    <node name="Atribuir situação em andamento">
+        <transition to="Testa competência" name="Testa competência"/>
         <event type="node-enter">
             <action expression="#{tramitacaoProcessualService.acrescentarSituacao('jus:andamento')}"/>
         </event>
     </node>
-    <decision expression="#{tramitacaoProcessualService.recuperaProcesso().getCompetencia().idCompetencia}" name="Testa competÃªncia">
+    <decision expression="#{tramitacaoProcessualService.recuperaProcesso().getCompetencia().idCompetencia}" name="Testa competência">
         <transition to="Iniciar fluxo do juizado especial federal" name="4"/>
     </decision>
     <node name="Iniciar fluxo do juizado especial federal">
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
+        <transition to="Término" name="Término"/>
         <event type="node-enter">
             <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'JEF')}"/>
         </event>
     </node>
     <process-state name="Juizado Especial Federal">
         <sub-process name="[JEF] Juizado Especial Federal" binding="late"/>
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
+        <transition to="Término" name="Término"/>
     </process-state>
-    <end-state name="TÃ©rmino"/>
-    <task-node end-tasks="true" name="NÃ³ de Desvio - Fluxo Inicial">
-        <task name="NÃ³ de Desvio - Fluxo Inicial" priority="3"/>
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
+    <end-state name="Término"/>
+    <task-node end-tasks="true" name="Nó de Desvio - Fluxo Inicial">
+        <task name="Nó de Desvio - Fluxo Inicial" priority="3"/>
+        <transition to="Término" name="Término"/>
     </task-node>  
     <!-- PROCESS-EVENTS -->
     <event type="superstate-enter">

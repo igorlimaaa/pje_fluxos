@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de evoluÃ§Ã£o da classe">
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de evolução da classe">
     <description><![CDATA[cd_fluxo: IAL_EVOL_CLASS
-DescriÃ§Ã£o: Fluxo destinado a evoluÃ§Ã£o da classe.]]></description>  
+Descrição: Fluxo destinado a evolução da classe.]]></description>  
     <!-- SWIMLANES -->
     <swimlane name="solicitante">
         <assignment actor-id="#{actor.id}"/>
     </swimlane>
-    <swimlane name="NÃ³ de Desvio - [IAL] Fluxo de evoluÃ§Ã£o da classe">
+    <swimlane name="Nó de Desvio - [IAL] Fluxo de evolução da classe">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338,9:1469')}"/>
     </swimlane>
     <swimlane name="Secretaria e Gabinete">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338')}"/>
     </swimlane>  
     <!-- START-STATE -->
-    <start-state name="InÃ­cio">
+    <start-state name="Início">
         <task name="Tarefa inicial" swimlane="solicitante" priority="3"/>
-        <transition to="[IAL] EvoluÃ§Ã£o de classe - EFETUAR" name="[IAL] EvoluÃ§Ã£o de classe - EFETUAR"/>
+        <transition to="[IAL] Evolução de classe - EFETUAR" name="[IAL] Evolução de classe - EFETUAR"/>
     </start-state>  
     <!-- NODES -->
-    <task-node end-tasks="true" name="[IAL] EvoluÃ§Ã£o de classe - EFETUAR">
-        <task name="[IAL] EvoluÃ§Ã£o de classe - EFETUAR" swimlane="Secretaria e Gabinete" priority="3"/>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de evoluÃ§Ã£o da classe" name="NÃ³ de Desvio - [IAL] Fluxo de evoluÃ§Ã£o da classe">
+    <task-node end-tasks="true" name="[IAL] Evolução de classe - EFETUAR">
+        <task name="[IAL] Evolução de classe - EFETUAR" swimlane="Secretaria e Gabinete" priority="3"/>
+        <transition to="Nó de Desvio - [IAL] Fluxo de evolução da classe" name="Nó de Desvio - [IAL] Fluxo de evolução da classe">
             <condition expression="#{true}"/>
         </transition>
     </task-node>
-    <end-state name="TÃ©rmino"/>
-    <task-node end-tasks="true" name="NÃ³ de Desvio - [IAL] Fluxo de evoluÃ§Ã£o da classe">
-        <task name="NÃ³ de Desvio - [IAL] Fluxo de evoluÃ§Ã£o da classe" swimlane="NÃ³ de Desvio - [IAL] Fluxo de evoluÃ§Ã£o da classe" priority="3"/>
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
-        <transition to="[IAL] EvoluÃ§Ã£o de classe - EFETUAR" name="[IAL] EvoluÃ§Ã£o de classe - EFETUAR"/>
+    <end-state name="Término"/>
+    <task-node end-tasks="true" name="Nó de Desvio - [IAL] Fluxo de evolução da classe">
+        <task name="Nó de Desvio - [IAL] Fluxo de evolução da classe" swimlane="Nó de Desvio - [IAL] Fluxo de evolução da classe" priority="3"/>
+        <transition to="Término" name="Término"/>
+        <transition to="[IAL] Evolução de classe - EFETUAR" name="[IAL] Evolução de classe - EFETUAR"/>
     </task-node>  
     <!-- PROCESS-EVENTS -->
     <event type="superstate-enter">

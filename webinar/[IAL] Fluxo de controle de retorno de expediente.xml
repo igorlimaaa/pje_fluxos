@@ -2,20 +2,20 @@
 
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de controle de retorno de expediente">
     <description><![CDATA[cd_fluxo: IAL_FLX_CONT_RETORNO_EXP
-Decri√ß√£o: Fluxo destinado ao controle de retorno de expediente. 
+DecriÁ„o: Fluxo destinado ao controle de retorno de expediente. 
 - Fluxo contendo apenas o frame da aba de expediente.]]></description>  
     <!-- SWIMLANES -->
     <swimlane name="solicitante">
         <assignment actor-id="#{actor.id}"/>
     </swimlane>
-    <swimlane name="N√≥ de Desvio - [IAL] Fluxo de controle de retorno de expediente">
+    <swimlane name="NÛ de Desvio - [IAL] Fluxo de controle de retorno de expediente">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338,9:1469')}"/>
     </swimlane>
     <swimlane name="Secretaria e Gabinete">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338')}"/>
     </swimlane>  
     <!-- START-STATE -->
-    <start-state name="In√≠cio">
+    <start-state name="InÌcio">
         <task name="Tarefa inicial" swimlane="solicitante" priority="3"/>
         <transition to="[IAL] Carta convite pendente de AR - Aguardar" name="[IAL] Carta convite pendente de AR - Aguardar"/>
     </start-state>  
@@ -26,14 +26,14 @@ Decri√ß√£o: Fluxo destinado ao controle de retorno de expediente.
                 <variable name="Processo_ConsultaProcesso_Detalhe_include_abaExpediente" mapped-name="frame:Processo_ConsultaProcesso_Detalhe_include_abaExpediente" access="read,write"/>
             </controller>
         </task>
-        <transition to="N√≥ de Desvio - [IAL] Fluxo de controle de retorno de expediente" name="N√≥ de Desvio - [IAL] Fluxo de controle de retorno de expediente">
+        <transition to="NÛ de Desvio - [IAL] Fluxo de controle de retorno de expediente" name="NÛ de Desvio - [IAL] Fluxo de controle de retorno de expediente">
             <condition expression="#{true}"/>
         </transition>
     </task-node>
-    <end-state name="T√©rmino"/>
-    <task-node end-tasks="true" name="N√≥ de Desvio - [IAL] Fluxo de controle de retorno de expediente">
-        <task name="N√≥ de Desvio - [IAL] Fluxo de controle de retorno de expediente" swimlane="N√≥ de Desvio - [IAL] Fluxo de controle de retorno de expediente" priority="3"/>
-        <transition to="T√©rmino" name="T√©rmino"/>
+    <end-state name="TÈrmino"/>
+    <task-node end-tasks="true" name="NÛ de Desvio - [IAL] Fluxo de controle de retorno de expediente">
+        <task name="NÛ de Desvio - [IAL] Fluxo de controle de retorno de expediente" swimlane="NÛ de Desvio - [IAL] Fluxo de controle de retorno de expediente" priority="3"/>
+        <transition to="TÈrmino" name="TÈrmino"/>
         <transition to="[IAL] Carta convite pendente de AR - Aguardar" name="[IAL] Carta convite pendente de AR - Aguardar"/>
     </task-node>  
     <!-- PROCESS-EVENTS -->

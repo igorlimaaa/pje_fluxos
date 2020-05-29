@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de autos recebidos da autuaÃ§Ã£o">
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de autos recebidos da autuação">
     <description><![CDATA[cd_fluxo: IAL_FLX_AUT_REC
-DescriÃ§Ã£o: Fluxo destinado ao autos recÃ©m protocolados.]]></description>  
+Descrição: Fluxo destinado ao autos recém protocolados.]]></description>  
     <!-- SWIMLANES -->
-    <swimlane name="NÃ³ de Desvio - [IAL] Fluxo de autos recebidos da autuaÃ§Ã£o">
+    <swimlane name="Nó de Desvio - [IAL] Fluxo de autos recebidos da autuação">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338,9:1469')}"/>
     </swimlane>
     <swimlane name="solicitante">
@@ -14,28 +14,35 @@ DescriÃ§Ã£o: Fluxo destinado ao autos recÃ©m protocolados.]]></description>
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338')}"/>
     </swimlane>  
     <!-- START-STATE -->
-    <start-state name="InÃ­cio">
+    <start-state name="Início">
         <task name="Tarefa inicial" swimlane="solicitante" priority="3"/>
         <transition to="[IAL] Autos recebidos - Analisar" name="[IAL] Autos recebidos - Analisar"/>
     </start-state>  
     <!-- NODES -->
     <task-node end-tasks="true" name="[IAL] Autos recebidos - Analisar">
         <task name="[IAL] Autos recebidos - Analisar" swimlane="Secretaria e Gabinete" priority="3"/>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de autos recebidos da autuaÃ§Ã£o" name="NÃ³ de Desvio - [IAL] Fluxo de autos recebidos da autuaÃ§Ã£o">
+        <transition to="Nó de Desvio - [IAL] Fluxo de autos recebidos da autuação" name="Nó de Desvio - [IAL] Fluxo de autos recebidos da autuação">
             <condition expression="#{true}"/>
         </transition>
-        <transition to="[IAL] Encaminhar para o fluxo de audiÃªncia" name="[IAL] Encaminhar para o fluxo de audiÃªncia"/>
+        <transition to="[IAL] Encaminhar para o fluxo de audiência" name="Designar audiência"/>
+        <transition to="[IAL] Encaminhar para o fluxo de análise da seção de cumprimento" name="Outras providências"/>
     </task-node>
-    <node name="[IAL] Encaminhar para o fluxo de audiÃªncia">
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
+    <node name="[IAL] Encaminhar para o fluxo de audiência">
+        <transition to="Término" name="Término"/>
         <event type="node-enter">
             <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_OP_AUD')}"/>
         </event>
     </node>
-    <end-state name="TÃ©rmino"/>
-    <task-node end-tasks="true" name="NÃ³ de Desvio - [IAL] Fluxo de autos recebidos da autuaÃ§Ã£o">
-        <task name="NÃ³ de Desvio - [IAL] Fluxo de autos recebidos da autuaÃ§Ã£o" swimlane="NÃ³ de Desvio - [IAL] Fluxo de autos recebidos da autuaÃ§Ã£o" priority="3"/>
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
+    <node name="[IAL] Encaminhar para o fluxo de análise da seção de cumprimento">
+        <transition to="Término" name="Término"/>
+        <event type="node-enter">
+            <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_SEC_ANAL_CUMP')}"/>
+        </event>
+    </node>
+    <end-state name="Término"/>
+    <task-node end-tasks="true" name="Nó de Desvio - [IAL] Fluxo de autos recebidos da autuação">
+        <task name="Nó de Desvio - [IAL] Fluxo de autos recebidos da autuação" swimlane="Nó de Desvio - [IAL] Fluxo de autos recebidos da autuação" priority="3"/>
+        <transition to="Término" name="Término"/>
         <transition to="[IAL] Autos recebidos - Analisar" name="[IAL] Autos recebidos - Analisar"/>
     </task-node>  
     <!-- PROCESS-EVENTS -->

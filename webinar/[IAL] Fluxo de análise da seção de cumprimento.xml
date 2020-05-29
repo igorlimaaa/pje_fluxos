@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de anÃ¡lise da seÃ§Ã£o de cumprimento">
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="[IAL] Fluxo de análise da seção de cumprimento">
     <description><![CDATA[cd_fluxo: IAL_FLX_SEC_ANAL_CUMP
-DescriÃ§Ã£o: Fluxo destinado a anÃ¡lise na seÃ§Ã£o de cumprimento.]]></description>  
+Descrição: Fluxo destinado a análise na seção de cumprimento....]]></description>  
     <!-- SWIMLANES -->
-    <swimlane name="NÃ³ de Desvio - [IAL] Fluxo de anÃ¡lise da seÃ§Ã£o de cumprimento">
+    <swimlane name="Nó de Desvio - [IAL] Fluxo de análise da seção de cumprimento">
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338,9:1469')}"/>
     </swimlane>
     <swimlane name="solicitante">
@@ -14,22 +14,47 @@ DescriÃ§Ã£o: Fluxo destinado a anÃ¡lise na seÃ§Ã£o de cumprimento.]]></descripti
         <assignment pooled-actors="#{localizacaoAssignment.getPooledActors('10:1338')}"/>
     </swimlane>  
     <!-- START-STATE -->
-    <start-state name="InÃ­cio">
+    <start-state name="Início">
         <task name="Tarefa inicial" swimlane="solicitante" priority="3"/>
-        <transition to="[IAL] SeÃ§Ã£o de cumprimento - ANALISAR" name="[IAL] SeÃ§Ã£o de cumprimento - ANALISAR"/>
+        <transition to="[IAL] Seção de cumprimento - ANALISAR" name="[IAL] Seção de cumprimento - ANALISAR"/>
     </start-state>  
     <!-- NODES -->
-    <task-node end-tasks="true" name="[IAL] SeÃ§Ã£o de cumprimento - ANALISAR">
-        <task name="[IAL] SeÃ§Ã£o de cumprimento - ANALISAR" swimlane="Secretaria e Gabinete" priority="3"/>
-        <transition to="NÃ³ de Desvio - [IAL] Fluxo de anÃ¡lise da seÃ§Ã£o de cumprimento" name="NÃ³ de Desvio - [IAL] Fluxo de anÃ¡lise da seÃ§Ã£o de cumprimento">
+    <task-node end-tasks="true" name="[IAL] Seção de cumprimento - ANALISAR">
+        <task name="[IAL] Seção de cumprimento - ANALISAR" swimlane="Secretaria e Gabinete" priority="3">
+            <controller>
+                <variable name="chk_elab_docu" mapped-name="sim_nao:chk_elab_docu" access="read,write"/>
+                <variable name="chk_elab_cart" mapped-name="sim_nao:chk_elab_cart" access="read,write"/>
+                <variable name="chk_real_aud" mapped-name="sim_nao:chk_real_aud" access="read,write"/>
+                <variable name="chk_op_aud" mapped-name="sim_nao:chk_op_aud" access="read,write"/>
+            </controller>
+        </task>
+        <description><![CDATA[f]]></description>
+        <transition to="Nó de Desvio - [IAL] Fluxo de análise da seção de cumprimento" name="Nó de Desvio - [IAL] Fluxo de análise da seção de cumprimento">
             <condition expression="#{true}"/>
         </transition>
+        <transition to="[IAL] Encaminhar para o fluxo de evolução da classe" name="Evoluir classe judicial"/>
+        <transition to="[IAL] Fluxo de lançamento de fluxos paralelos" name="Prosseguir na(s) tarefa(s) selecionada(s)"/>
+        <event type="task-create">
+            <action name="upd" expression="#{taskInstanceUtil.setVariable('mostrarBotaoGravarNoFluxo', 'false')}"/>
+        </event>
     </task-node>
-    <end-state name="TÃ©rmino"/>
-    <task-node end-tasks="true" name="NÃ³ de Desvio - [IAL] Fluxo de anÃ¡lise da seÃ§Ã£o de cumprimento">
-        <task name="NÃ³ de Desvio - [IAL] Fluxo de anÃ¡lise da seÃ§Ã£o de cumprimento" swimlane="NÃ³ de Desvio - [IAL] Fluxo de anÃ¡lise da seÃ§Ã£o de cumprimento" priority="3"/>
-        <transition to="TÃ©rmino" name="TÃ©rmino"/>
-        <transition to="[IAL] SeÃ§Ã£o de cumprimento - ANALISAR" name="[IAL] SeÃ§Ã£o de cumprimento - ANALISAR"/>
+    <node name="[IAL] Encaminhar para o fluxo de evolução da classe">
+        <transition to="Término" name="Término"/>
+        <event type="node-enter">
+            <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_EVOL_CLASS')}"/>
+        </event>
+    </node>
+    <node name="[IAL] Fluxo de lançamento de fluxos paralelos">
+        <transition to="Término" name="Término"/>
+        <event type="node-enter">
+            <action expression="#{processoJudicialService.incluirNovoFluxo(tramitacaoProcessualService.recuperaProcesso(), 'IAL_FLX_LAN_PARALELOS', processInstanceUtil.getVariables())}"/>
+        </event>
+    </node>
+    <end-state name="Término"/>
+    <task-node end-tasks="true" name="Nó de Desvio - [IAL] Fluxo de análise da seção de cumprimento">
+        <task name="Nó de Desvio - [IAL] Fluxo de análise da seção de cumprimento" swimlane="Nó de Desvio - [IAL] Fluxo de análise da seção de cumprimento" priority="3"/>
+        <transition to="Término" name="Término"/>
+        <transition to="[IAL] Seção de cumprimento - ANALISAR" name="[IAL] Seção de cumprimento - ANALISAR"/>
     </task-node>  
     <!-- PROCESS-EVENTS -->
     <event type="superstate-enter">

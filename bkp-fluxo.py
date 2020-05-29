@@ -28,7 +28,7 @@ if not os.path.exists(dst_dir):
     os.makedirs(dst_dir)
 
 for row in rows:
-    file = open(dst_dir + '/' + row[0] + '.xml', "w")
+    file = open(dst_dir + '/' + row[0].decode('latin1') + '.xml', "w")
     file.write(row[1])
     file.close()
 
